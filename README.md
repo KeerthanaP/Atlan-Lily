@@ -2,13 +2,10 @@
 ## Table of Contents
 - [Summary](#context--summary)
 - [Design Goals & Principles](#design-goals--principles)
-- [System Architecture Overview](#system-architecture-overview)
-- [Data Flow (Inbound & Outbound)](#data-flow-inbound--outbound)
-- [Metadata Store Strategy](#metadata-store-strategy)
-- [Security & Multi-Tenancy](#security--multi-tenancy)
-- [Prototype Use Cases](#prototype-use-cases)
-- [Cost, Scalability & Observability](#cost-scalability--observability)
-- [Technology Choices (Side Notes)](#technology-choices-side-notes)
+- [Requirements](#requirements)
+- [Architecture Overview](#architecture-overview)
+- [Use Cases](#use-cases)
+- [Architecture Diagram](#architecture-diagram)
 
 ---
 
@@ -36,36 +33,57 @@ This system will be built for scale, and modularity, with authentication, author
 - **Observability:** Incorporate robust logging, monitoring, and alerting capabilities for real-time monitoring.
 
 ---
+## Requirements
+## Functional Requirements
+1. Inbound connectors to ingest metadata from external sources(e.g. Monte Carlo, Slack, Jira) via webhooks, API polling or Change Data Capture(CDC)
+2. Metadata Transformation to convert raw metadata from various sources to standardized model, applying necessary pre/post transformations and enrichment.
+3. Support real-time metadata updates using event-driven architecture
+4. Enable communication between source systems, processing engines, and outbound connector with minimal delay.
+5. Provider outbound connectors to push metadata changes to external systems like Jira.
+6. Expose restful apis for metadata access and consumption
+7. Search service must support full-text search, autocomplete capabilities with near real-time indexing for metadata discovery.
+8. Support tagging of metadata (gdpr compliance) for downstream enforcement.
+9. Implement RBAC to restrict metadata access
+10. Implement rate limiting to prevent abuse of api
+11. Implement caching for frequest metadata with TTL-based invalidation to optimize performance and reduce database load
+12. Real-time monitoring with alerting and audit logging for all metadata processing activities
+13. Load balance request across connectors and APIs to support traffic distribution and failover.
+14. Support ingestion and querying of metadata georgraphical regions while ensuring data residency compliance(EU-US data transfer)
+15. Configure time-based or condition based metadata retention policy.
+16. Monitor and report metadata quality and completeness.
+17. Maintain and process failed metadata events with dead letter queue.
+## Non Functional Requirements
+1. System must scale across services like metadata ingestion, event bus, and metadata storage. 
+2. Low latency and high throughput
+3. Fault tolerant with high availability
+4. Encrypt metadata at rest and in transit.
+5. Implement RBAC with fine grained policies and JWT-based secure authentication support tenant-aware querying/access scoping.
+6. Plug and play design with versioning
+7. Cost efficient with cloud native features like auto-scaling
+8. Ensure regulatory compliance wrt data transfer.
+9. System must support region specific deployments
+10. Enforce per tenant and per user API quotas to ensure fair usage.
+11. Integrate structured logging, telemetry, real-time metrics collection across ingestion and processing pipelines.
 
-## Scope
 
-The architecture is designed around the **Atlan platform** as the core metadata hub, with integration layers for near-real-time data ingestion, event-based metadata updates, and downstream propagation.
+## Assumptions
+Atlan Lily primarily handles metadata ingestion, data quality issues, and observability signals, but does not process raw data-level Change Data Capture (CDC) events.
+1. The system will handle metadata flows from both large-scale data sources and smaller, frequent updates 
+2. Each tenant's metadata will be logically isolated via schema-level or database-level partitioning, with access scoping enforced.
+3. System will be deployed on scalable cloud based infrastructure, leveraging managed services
+4. Metadata replication across region will only included non-sensitive/masked attributes
+5. All underlying infrastructure are provisioned using cloud-native, managed services for reliability and auto scaling.
 
-| **Category**                          | **Description**                                                                                                                                 |
-|-----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Metadata Sources**                    | Ingest metadata from internal (Atlan platform) and external sources (e.g., Monte Carlo, SaaS tools like Slack, MS Teams). The data type can include tables, columns, dashaboard etc.|
-| **Real-Time Requirements**              | Sschema, lineage, are event-driven and needs to be captured near-real-time.  |
-| **Metadata Storage**                    | Scalable, distributed metadata store with eventual consistency for non-critical data.       |
-| **Data Transformations**                | Apply pre-ingest and post-consume transformations for enrichment, validation, and compliance (including GDPR). |
-**Authentication & Authorization**      | RBAC/ABAC for metadata access and OAuth2.0 for authentication.|
-| **Multi-Tenancy**                        | Support multi-tenant with logical isolation ensuring data privacy, compliance, and security with robust access control, partitioning and encryption. |
-| **SaaS Integrations**                   | API-driven integrations with third-party tools. Webhooks or polling mechanisms, supporting real-time metadata propagation
-| **Scalability**                          | A horizontally scalable platform to handle large metadata volumes (up to 1B assets) |
-| **Observability**                       | Built-in monitoring and logging for metadata flow and system health. Custom metrics and dashboards for KPIs(Key Performance Indicators). Can leverage Atlan's native observability tools for real-time insights |
+---
+## Architecture Overview
+
+![Atlan Lily Architecture Diagram](lily-overview.drawio.png)
+## Use Cases
+![Atlan Lily Architecture Diagram](lily-overview-base.png)
 
 ---
 
-## Architecture Overview
-
-
-![Atlan Lily Architecture Diagram](lily-overview.drawio.png)
-
-
-1. **Metadata Ingestion Layer**: Real-time ingestion of metadata using webhooks, APIs, and custom connectors.
-2. **Event Stream Layer**: Stream processing to ensure metadata is captured and propagated in real-time across systems.
-3. **Metadata Enrichment & Transformation**: Pre and post-processing to apply transformations, data validation, and compliance checks.
-4. **Atlan Platform**: The core system that handles metadata storage, querying, and visualization.
-5. **Outbound Dispatcher**: For real-time communication of metadata changes to downstream systems (e.g., dbt, Snowflake).
-6. **Observability**: Metrics and logs for platform health, metadata ingestion times, and API performance.
+## Architecture Diagram
+![Atlan Lily Architecture Diagram](lily-arch.png)
 
 ---
