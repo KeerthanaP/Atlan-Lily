@@ -79,7 +79,7 @@ Atlan Lily primarily handles metadata ingestion, data quality issues, and observ
 
 ![Atlan Lily Architecture Diagram](lily-overview.drawio.png)
 ## Use Cases
-![Atlan Lily Architecture Diagram](lily-overview-base.png)
+![Atlan Lily Architecture Diagram](lily-use-case.png)
 
 ---
 
