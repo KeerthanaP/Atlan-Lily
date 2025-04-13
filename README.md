@@ -158,8 +158,8 @@ This system will be built for scale, and modularity, with authentication, author
 ![Atlan Lily Architecture Diagram](lily-arch-v4.png)
 
 ---
-# Entity Relation for Metadata Store
-![Entity Relationship](lily-er.png) 
+<!-- # Entity Relation for Metadata Store
+![Entity Relationship](lily-er.png)  -->
 
 # Sequence of Interaction
 ## Metadata Ingestion
@@ -192,126 +192,6 @@ This API requires **JWT** authentication for access.
     }
   ]
 }
-```
-
----
-
-### **Endpoints**
-
-## Lineage API
-![Lineage API](lineage-api-v1.png) 
-
-
-#### **1. POST /metadata**
-
-**Summary:**  
-Creates or updates metadata for one or more assets, with support for retry and bulk operations.
-
-**Request Body:**
-
-```json
-{
-  "metadata": {
-    "asset": {
-      "asset_name": "string",            // The name of the asset, e.g., table or column name
-      "asset_type": "string",            // The type of the asset, e.g., COLUMN, TABLE, SCHEMA
-      "description": "string",           // A brief description of the asset
-      "tenant_id": "integer",           // Tenant ID for multi-tenancy (for tenant isolation)
-      "created_at": "string",           // Timestamp when the asset was created
-      "updated_at": "string"            // Timestamp when the asset was last updated
-    },
-    "metadata_details": {
-      "metadata_key": "string",          // A unique key for identifying metadata (e.g., column_name)
-      "metadata_value": "string",        // The value of the metadata (e.g., column type or constraints)
-      "metadata_source": "string",      // The source system from where metadata originated (e.g., MySQL, Postgres)
-      "metadata_type": "string",        // The type of metadata (e.g., STRUCTURAL, SEMANTIC)
-      "status": "string",                // Current status of the metadata (e.g., ACTIVE, INACTIVE, DEPRECATED)
-      "retention_policy": {
-        "enabled": "boolean",            // Whether retention policy is enabled
-        "retention_period_days": "integer", // Number of days the metadata is retained
-        "action_after_expiry": "string"  // Action to take after expiry (e.g., ARCHIVE, DELETE)
-      },
-      "downstream_status": "string",    // Status of metadata in downstream systems (e.g., SYNCHRONIZED, PENDING)
-      "downstream_notifications": [
-        {
-          "system_name": "string",          // Name of the external system for notifications (e.g., Slack, Jira)
-          "notification_status": "string",  // Notification status (e.g., SENT, FAILED)
-          "attempts": "integer",            // Number of attempts for sending notifications
-          "last_attempted_at": "string",    // Timestamp of the last attempt
-          "next_attempt_at": "string",      // Timestamp of the next scheduled attempt
-          "notification_type": "string",    // Type of notification (e.g., ALERT, INFO, WARNING)
-          "notification_method": "string",  // Method used for notification (e.g., EMAIL, API, SLACK)
-          "recipient": "string",            // The recipient of the notification (e.g., user, group)
-          "notification_payload": {
-            "ticket_title": "string",        // Title of the ticket for issues (if applicable)
-            "ticket_description": "string",  // Description of the issue or alert
-            "ticket_priority": "string",     // Priority of the ticket (e.g., LOW, MEDIUM, HIGH)
-            "ticket_labels": ["string"],     // Labels for categorizing the ticket (e.g., bug, feature request)
-            "message": "string"              // The actual message or notification content
-          },
-          "status_message": "string"         // Detailed status message regarding the notification
-        }
-      ]
-    }
-  }
-}
-
-```
-
-**Responses:**
-
-- `200`: Metadata successfully created or updated.
-  
-  ```json
-  {
-    "status": "success",
-    "message": "Metadata processed successfully."
-  }
-  ```
-
-- `400`: Invalid input or missing required fields.
-  
-- `500`: Internal server error.
-
----
-
-#### **2. POST /notifications/retry**
-
-**Summary:**  
-Retrieves a failed notification and retries sending it.
-
-**Request Body:**
-
-```json
-{
-  "notification_id": "string",
-  "retry_count": 1,
-  "reason": "string"
-}
-```
-
-**Responses:**
-
-- `200`: Notification retry successful.
-
-- `400`: Invalid notification ID or retry data.
-
-- `500`: Failed to retry notification.
-
----
-
----
-
-### **Security Scheme**
-
-The API uses **Bearer Authentication**. All endpoints require a valid JWT token.
-
-```yaml
-securitySchemes:
-  BearerAuth:
-    type: http
-    scheme: bearer
-    bearerFormat: JWT
 ```
 
 ---

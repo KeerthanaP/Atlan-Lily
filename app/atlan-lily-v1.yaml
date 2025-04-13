@@ -1,0 +1,362 @@
+openapi: 3.0.0
+info:
+  title: Atlan Lily API
+  version: 1.0.0
+  description: Production-ready OpenAPI spec for Atlan Lily
+servers:
+  - url: https://api.atlan.com/lily/v1
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Metadata:
+      type: object
+      properties:
+        asset_id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+    Lineage:
+      type: object
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        type:
+          type: string
+security:
+  - bearerAuth: []
+paths:
+  /metadata:
+    post:
+      summary: Ingest metadata
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Metadata'
+      responses:
+        '201':
+          description: Metadata created
+        '400':
+          description: Invalid input
+  /metadata/{asset_id}:
+    get:
+      summary: Get metadata by asset ID
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Metadata found
+        '404':
+          description: Metadata not found
+    put:
+      summary: Update metadata by asset ID
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Metadata'
+      responses:
+        '200':
+          description: Metadata updated
+    delete:
+      summary: Delete metadata by asset ID
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted
+  /metadata/lineage:
+    post:
+      summary: Create or update lineage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lineage'
+      responses:
+        '201':
+          description: Lineage created
+  /metadata/lineage/{asset_id}:
+    get:
+      summary: Get lineage by asset ID
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lineage graph
+    delete:
+      summary: Delete lineage by asset ID
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Lineage deleted
+  /metadata/access-control:
+    post:
+      summary: Set RBAC for an asset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: RBAC set
+  /metadata/access-control/{asset_id}:
+    get:
+      summary: Get RBAC for an asset
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: RBAC info
+  /metadata/governance/classification:
+    post:
+      summary: Set classification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Classification set
+  /metadata/governance/classification/{asset_id}:
+    get:
+      summary: Get classification
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Classification info
+  /metadata/governance/retention:
+    post:
+      summary: Set retention policy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Retention policy set
+  /metadata/governance/retention/{asset_id}:
+    get:
+      summary: Get retention policy
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Retention info
+  /metadata/notifications:
+    post:
+      summary: Send notification for an asset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Notification sent
+  /metadata/data-quality:
+    post:
+      summary: Set data quality rules
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Quality rules set
+  /metadata/data-quality/{asset_id}:
+    get:
+      summary: Get data quality rules
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Quality rules info
+  /metadata/search:
+    get:
+      summary: Search metadata
+      parameters:
+        - in: query
+          name: q
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Search results
+  /metadata/audit/{asset_id}:
+    get:
+      summary: Audit logs for metadata
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Audit log
+  /auth/login:
+    post:
+      summary: Login and get JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: JWT token
+  /auth/logout:
+    post:
+      summary: Logout
+      responses:
+        '204':
+          description: Logged out
+  /auth/validate:
+    get:
+      summary: Validate JWT
+      responses:
+        '200':
+          description: Token valid
+  /system/health:
+    get:
+      summary: System health check
+      responses:
+        '200':
+          description: Healthy
+  /tenants/{tenant_id}/sources:
+    get:
+      summary: List inbound/outbound sources
+      parameters:
+        - in: path
+          name: tenant_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Source config
+  /tenants/{tenant_id}/config:
+    get:
+      summary: Get tenant config
+      parameters:
+        - in: path
+          name: tenant_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Config details
+  /connectors/{tenant_id}:
+    post:
+      summary: Register connector
+      parameters:
+        - in: path
+          name: tenant_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: Connector registered
+    get:
+      summary: List tenant connectors
+      parameters:
+        - in: path
+          name: tenant_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Connector list
+  /connectors/{tenant_id}/{connector_id}:
+    delete:
+      summary: Remove connector
+      parameters:
+        - in: path
+          name: tenant_id
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: connector_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Connector removed
