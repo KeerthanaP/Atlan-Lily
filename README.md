@@ -70,7 +70,14 @@ This system will be built for scale, and modularity, with authentication, author
 - **Observability:** Incorporate robust logging, monitoring, and alerting capabilities for real-time monitoring.
 
 ---
-# Restful APIs
+## **Atlan Lily Metadata Management API**
+
+### **Base URL**
+
+```
+https://api.atlan.com/lily/v1
+```
+
 ## Metadata APIs
 | Method | Endpoint                                      | Description                                                  |
 |--------|-----------------------------------------------|--------------------------------------------------------------|
@@ -145,6 +152,22 @@ This system will be built for scale, and modularity, with authentication, author
 | GET    | /tenants/{tenant_id}/sources                  | List inbound/outbound sources for tenant                     |
 | GET    | /tenants/{tenant_id}/config                   | Retrieve tenant-specific configuration                       |
 
+### **Security**
+
+This API requires **JWT** authentication for access.
+
+```json
+{
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ]
+}
+```
+
+## Open API Spec
+[Atlan Lily Open API Spec](atlan-lily-v1.yaml)
 ---
 ## Architecture Overview
 
@@ -168,30 +191,5 @@ This system will be built for scale, and modularity, with authentication, author
 ![Bulk Metadata Ingestion](inbound-internal-seq-v2.png)
 ## Metadata Transformation Service
 ![Metadata Transformation Service](metadata-transformation-service.png) 
-
-
-## **Atlan Lily Metadata Management API**
-
-This API provides a mechanism to manage metadata assets, notifications, and support for retry and bulk operations. It allows customers to interact with metadata, such as creating, updating, and importing metadata for multiple assets. It also supports the management of notification retries and provides the ability to handle metadata lineage, retention, and notification settings.
-
-### **Base URL**
-
-```
-https://api.atlan.com/lily/v1
-```
-
-### **Security**
-
-This API requires **JWT** authentication for access.
-
-```json
-{
-  "security": [
-    {
-      "BearerAuth": []
-    }
-  ]
-}
-```
 
 ---
