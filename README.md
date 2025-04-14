@@ -166,7 +166,6 @@ This API requires **JWT** authentication for access.
 }
 ```
 
-## Open API Spec
 [Atlan Lily Open API Spec](atlan-lily-v1.yaml)
 ---
 ## Architecture Overview
@@ -178,17 +177,11 @@ This API requires **JWT** authentication for access.
 ---
 
 ## Architecture Diagram
-![Atlan Lily Architecture Diagram](lily-arch-v4.png)
-
----
-<!-- # Entity Relation for Metadata Store
-![Entity Relationship](lily-er.png)  -->
+![Atlan Lily Architecture Diagram](lily-arch-v5.png)
 
 # Sequence of Interaction
 ## Metadata Ingestion
 ![Metadata Ingestion](<metadata-ingestion-seq.png>) 
-## Bulk Metadata Ingestion
-![Bulk Metadata Ingestion](inbound-internal-seq-v2.png)
 ## Metadata Transformation Service
 ![Metadata Transformation Service](metadata-transformation-service.png) 
 
