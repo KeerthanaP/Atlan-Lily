@@ -168,21 +168,20 @@ This API requires **JWT** authentication for access.
 
 [Atlan Lily Open API Spec](atlan-lily-v1.yaml)
 ---
-## Architecture Overview
-
-![Atlan Lily Architecture Diagram](lily-overview.drawio.png)
 ## Use Cases
 ![Atlan Lily Architecture Diagram](lily-use-case-v2.png)
 
 ---
 
 ## Architecture Diagram
-![Atlan Lily Architecture Diagram](lily-arch-v5.png)
+![Atlan Lily Architecture Diagram](lily-arch-v3.png)
 
 # Sequence of Interaction
 ## Metadata Ingestion
 ![Metadata Ingestion](<metadata-ingestion-seq.png>) 
 ## Metadata Transformation Service
 ![Metadata Transformation Service](metadata-transformation-service.png) 
+## Outbound Dispatcher Service
+![Bulk Metadata Ingestion](outbound-external-seq.png)
 
 ---
