@@ -57,7 +57,7 @@ docker-compose up --build
 3. Run with Docker Compose
 4. Access the API at http://localhost:8000
 
-### Server Outpit
+### Server Output
 !Server output](images/server-output.png)
 
 ## Unit Tests
