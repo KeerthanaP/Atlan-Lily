@@ -8,7 +8,8 @@ import uuid
 class MetadataDBModel(Base):
     __tablename__ = "metadata"
     
-    asset_id = Column(String, primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
+    metadata_id = Column(String, primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
+    asset_id = Column(String, index=True)
     name = Column(String, index=True)
     type = Column(String)
     source_type = Column(String)  # Added for MySQL example

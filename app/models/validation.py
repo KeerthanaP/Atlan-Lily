@@ -60,3 +60,6 @@ class SearchResponse(BaseModel):
     total: int
     limit: int
     offset: int
+    
+    def __len__(self) -> int:
+        return len(self.results)

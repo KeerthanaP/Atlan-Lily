@@ -11,7 +11,7 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # Stage 2: Final Stage (Copy files and set up environment)
-FROM python:3.9-slim
+FROM python:3.9-slim AS atlan-lily
 
 # Set work directory
 WORKDIR /app

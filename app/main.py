@@ -9,6 +9,9 @@ from config.config import Config
 
 engine = create_engine(Config.DATABASE_URL)
 
+# drop and clear db for testing purpose
+# Base.metadata.drop_all(bind=engine)
+
 # Create tables in the database (this only creates tables that don't already exist)
 Base.metadata.create_all(bind=engine)
 
