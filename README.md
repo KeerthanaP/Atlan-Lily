@@ -103,7 +103,7 @@ https://api.atlan.com/lily/v1
 | Method | Endpoint                                      | Description                                                  |
 |--------|-----------------------------------------------|--------------------------------------------------------------|
 | POST   | /metadata                                      | Ingest new metadata (real-time or batch)                     |
-| GET    | /metadata/{asset_id}                          | Retrieve metadata by asset ID                                |
+| GET    | /metadata/{asset_id}                          | Retrieve metadata by asset ID and history with pagination                                |
 | PUT    | /metadata/{asset_id}                          | Update metadata by asset ID                                  |
 | DELETE | /metadata/{asset_id}                          | Delete metadata by asset ID                                  |
 
@@ -260,7 +260,7 @@ In addition to the core components and technologies listed, it is important to c
 ---
 
 ### **1. Programming Language**
-   **Python**: Ideal for data manipulation and validation, with a large ecosystem of libraries for working with metadata and schemas (e.g., PyArrow, pandas, etc.). Python is chosen to ensure the development of scalable, maintainable, and performant services and components.
+   **Python**: Python is ideal for data manipulation and validation, with a large ecosystem of libraries for working with metadata and schemas (e.g., PyArrow, pandas, etc.). It is chosen to ensure the development of scalable, maintainable, and performant services and components. 
 
 ---
 

@@ -15,16 +15,59 @@ components:
     Metadata:
       type: object
       properties:
-        asset_id:
+        source_type:
           type: string
-        name:
+          description: The type of the source system (e.g., "MySQL", "PowerBI", "JIRA")
+          example: "MySQL"
+        source_id:
           type: string
-        type:
-          type: string
+          description: A unique identifier for the source (e.g., table name, report name)
+          example: "db1.table1"
+        metadata:
+          type: object
+          description: Metadata details about the source asset
+          properties:
+            name:
+              type: string
+              description: The name of the asset (e.g., table name, report name)
+              example: "Users"
+            description:
+              type: string
+              description: A brief description of the metadata asset
+              example: "Contains user data"
+            attributes:
+              type: array
+              description: List of attributes related to the metadata asset
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: Name of the attribute/field
+                    example: "user_id"
+                  type:
+                    type: string
+                    description: Data type of the attribute
+                    example: "int"
+                  nullable:
+                    type: boolean
+                    description: Whether the attribute is nullable or not
+                    example: false
         tags:
           type: array
           items:
             type: string
+          description: Optional tags for classification or categorization
+          example: ["sensitive", "user_data"]
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp when the metadata is ingested
+          example: "2025-04-15T12:00:00Z"
+        tenant_id:
+          type: string
+          description: The tenant identifier for multi-tenancy
+          example: "tenant_123"
     Lineage:
       type: object
       properties:
@@ -51,48 +94,6 @@ paths:
           description: Metadata created
         '400':
           description: Invalid input
-  /metadata/{asset_id}:
-    get:
-      summary: Get metadata by asset ID
-      parameters:
-        - in: path
-          name: asset_id
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Metadata found
-        '404':
-          description: Metadata not found
-    put:
-      summary: Update metadata by asset ID
-      parameters:
-        - in: path
-          name: asset_id
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Metadata'
-      responses:
-        '200':
-          description: Metadata updated
-    delete:
-      summary: Delete metadata by asset ID
-      parameters:
-        - in: path
-          name: asset_id
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: Deleted
   /metadata/lineage:
     post:
       summary: Create or update lineage
@@ -107,16 +108,52 @@ paths:
           description: Lineage created
   /metadata/lineage/{asset_id}:
     get:
-      summary: Get lineage by asset ID
+      summary: Get lineage graph by asset ID
       parameters:
         - in: path
           name: asset_id
           required: true
           schema:
             type: string
+        - in: query
+          name: include_history
+          required: false
+          schema:
+            type: boolean
+          description: If true, returns historical lineage updates
+        - in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            default: 10
       responses:
         '200':
-          description: Lineage graph
+          description: Lineage graph and optional history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  asset_id:
+                    type: string
+                  lineage:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Lineage'
+                  history:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Lineage'
+                    description: Present only if include_history=true
+        '404':
+          description: Lineage not found
     delete:
       summary: Delete lineage by asset ID
       parameters:
@@ -137,6 +174,13 @@ paths:
           application/json:
             schema:
               type: object
+              properties:
+                asset_id:
+                  type: string
+                roles:
+                  type: array
+                  items:
+                    type: string
       responses:
         '200':
           description: RBAC set
@@ -221,6 +265,21 @@ paths:
           application/json:
             schema:
               type: object
+              properties:
+                asset_id:
+                  type: string
+                quality_rules:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      rule_name:
+                        type: string
+                      description:
+                        type: string
+                      parameters:
+                        type: object
+                        additionalProperties: true
       responses:
         '200':
           description: Quality rules set
@@ -238,16 +297,57 @@ paths:
           description: Quality rules info
   /metadata/search:
     get:
-      summary: Search metadata
+      summary: Search metadata by asset ID or name
+      description: Searches for metadata based on a partial match of the asset ID or name. Returns all matching metadata entries.
       parameters:
-        - in: query
-          name: q
-          required: false
+        - name: query
+          in: query
+          required: true
+          description: Search query to match asset ID or name.
           schema:
             type: string
+        - name: limit
+          in: query
+          required: false
+          description: Limit the number of results returned (default is 10).
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: offset
+          in: query
+          required: false
+          description: Offset for pagination (default is 0).
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
       responses:
         '200':
-          description: Search results
+          description: Successful search of metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    description: Total number of matching metadata entries
+                  limit:
+                    type: integer
+                    description: Limit for paginated results
+                  offset:
+                    type: integer
+                    description: Offset for paginated results
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Metadata'
+        '400':
+          description: Invalid search query or parameters
+        '404':
+          description: No matching metadata found
   /metadata/audit/{asset_id}:
     get:
       summary: Audit logs for metadata
@@ -284,6 +384,8 @@ paths:
       responses:
         '200':
           description: Token valid
+        '401':
+          description: Token invalid or expired
   /system/health:
     get:
       summary: System health check
@@ -314,6 +416,17 @@ paths:
       responses:
         '200':
           description: Config details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  config_id:
+                    type: string
+                  settings:
+                    type: object
+                    additionalProperties: true
+
   /connectors/{tenant_id}:
     post:
       summary: Register connector
@@ -329,6 +442,12 @@ paths:
           application/json:
             schema:
               type: object
+              properties:
+                connector_name:
+                  type: string
+                config:
+                  type: object
+                  additionalProperties: true
       responses:
         '201':
           description: Connector registered

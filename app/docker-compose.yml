@@ -1,0 +1,37 @@
+services:
+  app:
+    build:
+      context: .
+    container_name: atlan_lily_app
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/atlan_lily
+      - JWT_SECRET_KEY=your-secret-key
+      - APP_ENV=production
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - atlan_lily_network
+
+  db:
+    image: postgres:13
+    container_name: atlan_lily_db
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=atlan_lily
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - atlan_lily_network
+
+volumes:
+  db_data:
+    driver: local
+
+networks:
+  atlan_lily_network:
+    driver: bridge
