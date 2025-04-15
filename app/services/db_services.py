@@ -7,19 +7,31 @@ from config.config import Config
 from typing import Optional
 from models.metadata import Metadata
 
+# DatabaseService handles the database connection and operations
 class DatabaseService:
     def __init__(self):
+        """
+        @summary: Initialize the DatabaseService with a database session.
+        """
         self.db_session = self._get_db_session()
 
     def _get_db_session(self):
-        """Create a new session for database interaction."""
+        """
+        @summary: Create a new database session.
+        @return: A new database session.
+        """
         DATABASE_URL = Config.DATABASE_URL
         engine = create_engine(DATABASE_URL)
         SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
         return SessionLocal()
 
     def save_metadata(self, metadata: Metadata) -> bool:
-        """Save metadata to the database."""
+        """
+        @summary: Save metadata to the database.
+        @param metadata: The metadata object to save.
+        @return: True if saved successfully, False otherwise.
+        @raises IntegrityError: If there is a database integrity error.
+        """
         try:
             db_metadata = MetadataDB(
                 asset_id=metadata.asset_id,
@@ -38,5 +50,7 @@ class DatabaseService:
             return False
 
     def close(self):
-        """Close the session."""
+        """
+        @summary: Close the database session.
+        """
         self.db_session.close()
