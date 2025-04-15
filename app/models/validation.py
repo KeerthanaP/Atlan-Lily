@@ -1,6 +1,9 @@
 from pydantic import BaseModel, Field, conlist
 from typing import List, Optional
 from datetime import datetime
+from typing import List, Dict, Any, Optional
+from datetime import datetime
+
 
 # Define the Attribute model
 class Attribute(BaseModel):
@@ -9,7 +12,6 @@ class Attribute(BaseModel):
     nullable: bool
 
     class Config:
-        """""""
         min_anystr_length = 1
         anystr_strip_whitespace = True
 
@@ -41,3 +43,20 @@ class MetadataIn(BaseModel):
     def validate_metadata(cls, metadata: dict):
         # Perform custom validation logic here, if necessary
         pass
+
+class MetadataSearchResult(BaseModel):
+    asset_id: str
+    name: str
+    type: str
+    source_type: Optional[str] = None
+    source_id: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = None
+    tags: List[str] = []
+    timestamp: Optional[datetime] = None
+    tenant_id: Optional[str] = None
+
+class SearchResponse(BaseModel):
+    results: List[MetadataSearchResult]
+    total: int
+    limit: int
+    offset: int

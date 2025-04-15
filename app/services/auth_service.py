@@ -1,28 +1,32 @@
-# services/auth_service.py
 from fastapi import HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
-from config.config import Config
 import os
-
+from config.config import Config
+# load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
+# OAuth2 scheme used to extract the token from headers
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# This service handles authentication and JWT token management.
 class AuthService:
     def __init__(self):
         """
-        @summary: Initialize the AuthService with JWT secret and algorithm.
+        Initialize the AuthService with JWT secret, algorithm, and expiration time.
         """
-        self.secret_key = os.getenv("JWT_SECRET")
-        self.algorithm = os.getenv("JWT_ALGORITHM")
-        self.expiration_time = 3600  # 1 hour
-    
-    def create_access_token(self, data: dict):
+        self.secret_key = Config.JWT_SECRET
+        self.algorithm = Config.JWT_ALGORITHM
+        self.expiration_time = int(Config.JWT_EXPIRATION_TIME)  # Default to 1 hour if not set
+
+        # Ensure that critical environment variables are set
+        if not self.secret_key or not self.algorithm:
+            raise ValueError("Missing JWT_SECRET or JWT_ALGORITHM in environment variables.")
+
+    def create_access_token(self, data: dict, expires_delta: timedelta):
         """
-        @summary: Create a new access token.
-        @param data: The data to encode in the JWT token.   
-        @return: The encoded JWT token.
+        Create a new access token.
+        :param data: The data to encode in the JWT token.
+        :param expiry_time: timedelta for token expiration
+        :return: The encoded JWT token.
         """
         to_encode = data.copy()
         expiration = datetime.utcnow() + timedelta(seconds=self.expiration_time)
@@ -31,10 +35,10 @@ class AuthService:
     
     def verify_token(self, token: str):
         """
-        @summary: Verify the JWT token and return the payload.  
-        @param token: The JWT token to verify.
-        @return: The decoded payload if the token is valid.
-        @raises HTTPException: If the token is invalid or expired.
+        Verify the JWT token and return the payload.
+        :param token: The JWT token to verify.
+        :return: The decoded payload if the token is valid.
+        :raises HTTPException: If the token is invalid or expired.
         """
         try:
             payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
@@ -44,10 +48,10 @@ class AuthService:
 
     def get_current_user(self, request: Request):
         """
-        @summary: Get the current user from the request.    
-        @param request: The HTTP request object.
-        @return: The user information if the token is valid.
-        @raises HTTPException: If the token is invalid or expired.
+        Get the current user from the request.
+        :param request: The HTTP request object.
+        :return: The user information if the token is valid.
+        :raises HTTPException: If the token is invalid or expired.
         """
         token = request.headers.get("Authorization")
         if token:
@@ -55,4 +59,4 @@ class AuthService:
         else:
             raise HTTPException(status_code=403, detail="Not authenticated")
         
-        return self.verify_token(token)
+        return

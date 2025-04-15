@@ -1,17 +1,61 @@
+### Get Access Token (Login)
+
+POST http://127.0.0.1:8000/token
+Content-Type: application/json
+
+{
+  "username": "kprabhakaran",
+  "password": "password"
+}
+
+### Get Access Token (Invalid Credentials)
+
+POST http://127.0.0.1:8000/token
+Content-Type: application/json
+
+{
+  "username": "invalid_user",
+  "password": "invalid_password"
+}
+
 ### Ingest Metadata (POST /metadata)
 POST http://localhost:8000/metadata HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer <your-jwt-token>
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrcHJhYmhha2FyYW4iLCJleHAiOjE3NDQ3NDg3MDF9.4OnN6dUyVGxzuPzMOBPli57HEPFcChNVIS9r6H1QZXk
 
 {
-    "asset_id": "asset_001",
+  "type": "table",
+  "source_type": "MySQL",
+  "source_id": "db1.users",
+  "metadata": {
     "name": "Users Table",
-    "type": "table",
-    "tags": ["sensitive", "user-data"],
-    "description": "This table stores user information",
-    "timestamp": "2025-04-15T12:00:00Z"
+    "description": "Contains user information for authentication.",
+    "attributes": [
+      {
+        "name": "phone",
+        "type": "int",
+        "nullable": false
+      },
+      {
+        "name": "email",
+        "type": "varchar",
+        "nullable": false,
+        "size": 125
+      }
+    ]
+  },
+  "tags": ["sensitive", "user_data"],
+  "timestamp": "2025-04-15T12:00:00Z",
+  "tenant_id": "tenant_123"
 }
+
+
 
 ### Search Metadata (GET /metadata/search)
 GET http://localhost:8000/metadata/search?query=table&limit=10&offset=0 HTTP/1.1
-Authorization: Bearer <your-jwt-token>
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrcHJhYmhha2FyYW4iLCJleHAiOjE3NDQ3NDQ4ODR9.Jqphsy3bhkKom-sUDfG0c4uWsAH1MnHizqSTwpKwNuE
+
+
+### Search with Source Type and ID
+GET http://localhost:8000/metadata/search?query=table&limit=10&offset=0 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrcHJhYmhha2FyYW4iLCJleHAiOjE3NDQ3NDQ4ODR9.Jqphsy3bhkKom-sUDfG0c4uWsAH1MnHizqSTwpKwNuE

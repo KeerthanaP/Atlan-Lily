@@ -5,8 +5,11 @@ services:
     container_name: atlan_lily_app
     environment:
       - DATABASE_URL=postgresql://user:password@db:5432/atlan_lily
-      - JWT_SECRET_KEY=your-secret-key
-      - APP_ENV=production
+      - SEARCH_ENGINE_URL=http://elasticsearch:9200
+      - JWT_SECRET=atlan-lily-jwt-secret-key
+      - JWT_ALGORITHM=HS256
+      - JWT_EXPIRATION_TIME=3600
+      - APP_ENV=local
     ports:
       - "8000:8000"
     depends_on:
