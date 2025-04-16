@@ -28,17 +28,17 @@
     - [System \& Auth](#system--auth)
     - [Tenant Management](#tenant-management)
     - [**Security**](#security)
-- [Back-of-the-Envelope Estimation](#back-of-the-envelope-estimation)
-  - [Core Architectural Components](#core-architectural-components)
-  - [Infra Cost Breakdown (With Detailed Estimates)](#infra-cost-breakdown-with-detailed-estimates)
+  - [Back-of-the-Envelope Estimation](#back-of-the-envelope-estimation)
+    - [Core Architectural Components](#core-architectural-components)
+    - [Infra Cost Breakdown (With Detailed Estimates)](#infra-cost-breakdown-with-detailed-estimates)
     - [Total Estimated Cost](#total-estimated-cost)
   - [Programming Language \& Containerization](#programming-language--containerization)
-    - [= Programming Language](#-programming-language)
+    - [Programming Language](#programming-language)
     - [CI/CD Pipeline \& Automation](#cicd-pipeline--automation)
   - [Tenancy \& Deployment](#tenancy--deployment)
     - [Deployment Options](#deployment-options)
-      - [**Isolated Deployment**](#isolated-deployment)
-      - [**Shared Deployment**](#shared-deployment)
+      - [Isolated Deployment](#isolated-deployment)
+      - [Shared Deployment](#shared-deployment)
   - [Service Level Aggrement](#service-level-aggrement)
   - [Prototype Implementation](#prototype-implementation)
   - [Final Considerations](#final-considerations)
@@ -217,13 +217,13 @@ This API requires **JWT** authentication for access.
 }
 ```
 ---
-# Back-of-the-Envelope Estimation
+## Back-of-the-Envelope Estimation
 Estimated monthly cost and infra footprint for processing real-time metadata events from
 - 5000 daily active users (DAUs),
 - 30M metadata events/month (~2 KB/event)
 - Across multi tenant SaaS usage(shared, isolated resources)
 
-## Core Architectural Components
+### Core Architectural Components
 
 | Layer                | Technology                  | Purpose                                                             |
 | -------------------- | --------------------------- | ------------------------------------------------------------------- |
@@ -238,7 +238,7 @@ Estimated monthly cost and infra footprint for processing real-time metadata eve
 | **Observability**    | Prometheus + Grafana        | Monitoring, alerting, logs                                          |
 
 
-## Infra Cost Breakdown (With Detailed Estimates)
+### Infra Cost Breakdown (With Detailed Estimates)
 
 | Component                    | Description                                           | Est. Monthly Cost | Cost Breakdown Explanation                                                                                                                                                                   |
 | ---------------------------- | ----------------------------------------------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -263,17 +263,13 @@ Estimated monthly cost and infra footprint for processing real-time metadata eve
 | --------- | --------------------- |
 | **Total** | **~$6,027/month**     |
 
-
+---
 ## Programming Language & Containerization
 
 In addition to the core components and technologies listed, it is important to carefully consider the **programming language** and **containerization** technologies that will power the Atlan Lily system. Here’s an analysis of the considerations for both:
 
----
-
-### = Programming Language
+###  Programming Language
    **Python**: Python is ideal for data manipulation and validation, with a large ecosystem of libraries for working with metadata and schemas (e.g., PyArrow, pandas, etc.). It is chosen to ensure the development of scalable, maintainable, and performant services and components. 
-
----
 
 ### CI/CD Pipeline & Automation
    To automate code deployments, ensuring continuous integration and continuous delivery of code to production.
@@ -293,10 +289,10 @@ In addition to the core components and technologies listed, it is important to c
 
 ### Deployment Options
 
-#### **Isolated Deployment**  
+#### Isolated Deployment
 - Option to provision **dedicated databases/services** per tenant for full isolation.
 
-#### **Shared Deployment**
+#### Shared Deployment
 
 - **Metadata Store (SQL)**  
   Uses a common SQL database (e.g., PostgreSQL) with `tenant_id` as a partitioning key.
@@ -307,15 +303,15 @@ In addition to the core components and technologies listed, it is important to c
 - **Lineage Store (GraphDB)**  
   Shared **GraphDB** (e.g., **Neptune**) with **per-tenant subgraphs**.
 
-
+---
 ## Service Level Aggrement
 - 99.9% uptime on the system.
 - <5s metadata ingestion, <2s search, <5s lineage, supporting up to 10k concurrent users.
 
-
+----
 ## Prototype Implementation
-For inbound/outbound prototype APIs, check out the [Prototype README](app/README.md).
-
+- For inbound/outbound prototype APIs, check out the [Prototype README](app/README.md).
+---
 ## Final Considerations
 
 As we move forward with **Atlan Lily**, continuous focus on **performance optimization**, **security enhancements**, and **customer feedback loops** will ensure the platform evolves to meet emerging needs while maintaining its core promise of enabling **real-time metadata management at enterprise scale**.
