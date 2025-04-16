@@ -72,10 +72,11 @@ async def search_metadata(query: str = Query(..., description="Search query to m
             
         # Continue with normal search...
         metadata_service = MetadataService()
-        search_results = await metadata_service.search_metadata(query, limit, offset)
+        search_results = metadata_service.search_metadata(query, limit, offset)
         
         return search_results
-        
+    except HTTPException as e:
+        raise e
     except Exception as e:
         logger.error(f"Error during metadata search: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error during metadata search: {str(e)}")
