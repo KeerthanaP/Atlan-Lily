@@ -1,0 +1,495 @@
+openapi: 3.0.0
+info:
+  title: Atlan Lily API
+  version: 1.0.0
+  description: Production-ready OpenAPI spec for Atlan Lily
+servers:
+  - url: https://api.atlan.com/lily/v1
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Metadata:
+      type: object
+      properties:
+        source_type:
+          type: string
+          description: The type of the source system (e.g., "MySQL", "PowerBI", "JIRA")
+          example: "MySQL"
+        source_id:
+          type: string
+          description: A unique identifier for the source (e.g., table name, report name)
+          example: "db1.table1"
+        metadata:
+          type: object
+          description: Metadata details about the source asset
+          properties:
+            name:
+              type: string
+              description: The name of the asset (e.g., table name, report name)
+              example: "Users"
+            description:
+              type: string
+              description: A brief description of the metadata asset
+              example: "Contains user data"
+            attributes:
+              type: array
+              description: List of attributes related to the metadata asset
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: Name of the attribute/field
+                    example: "user_id"
+                  type:
+                    type: string
+                    description: Data type of the attribute
+                    example: "int"
+                  nullable:
+                    type: boolean
+                    description: Whether the attribute is nullable or not
+                    example: false
+        tags:
+          type: array
+          items:
+            type: string
+          description: Optional tags for classification or categorization
+          example: ["sensitive", "user_data"]
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp when the metadata is ingested
+          example: "2025-04-15T12:00:00Z"
+        tenant_id:
+          type: string
+          description: The tenant identifier for multi-tenancy
+          example: "tenant_123"
+    Lineage:
+      type: object
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        type:
+          type: string
+security:
+  - bearerAuth: []
+paths:
+  /metadata:
+    post:
+      summary: Ingest metadata
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Metadata'
+      responses:
+        '201':
+          description: Metadata created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  asset_id:
+                    type: string
+                    description: Unique identifier of the ingested asset
+                  message:
+                    type: string
+                    description: Confirmation message
+                required:
+                  - asset_id
+                  - message
+        '422':
+          description: Invalid input
+  /metadata/lineage:
+    post:
+      summary: Create or update lineage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lineage'
+      responses:
+        '201':
+          description: Lineage created
+  /metadata/lineage/{asset_id}:
+    get:
+      summary: Get lineage graph by asset ID
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: include_history
+          required: false
+          schema:
+            type: boolean
+          description: If true, returns historical lineage updates
+        - in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Lineage graph and optional history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  asset_id:
+                    type: string
+                  lineage:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Lineage'
+                  history:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Lineage'
+                    description: Present only if include_history=true
+        '404':
+          description: Lineage not found
+    delete:
+      summary: Delete lineage by asset ID
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Lineage deleted
+  /metadata/access-control:
+    post:
+      summary: Set RBAC for an asset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                asset_id:
+                  type: string
+                roles:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: RBAC set
+  /metadata/access-control/{asset_id}:
+    get:
+      summary: Get RBAC for an asset
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: RBAC info
+  /metadata/governance/classification:
+    post:
+      summary: Set classification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Classification set
+  /metadata/governance/classification/{asset_id}:
+    get:
+      summary: Get classification
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Classification info
+  /metadata/governance/retention:
+    post:
+      summary: Set retention policy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Retention policy set
+  /metadata/governance/retention/{asset_id}:
+    get:
+      summary: Get retention policy
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Retention info
+  /metadata/notifications:
+    post:
+      summary: Send notification for an asset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Notification sent
+  /metadata/data-quality:
+    post:
+      summary: Set data quality rules
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                asset_id:
+                  type: string
+                quality_rules:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      rule_name:
+                        type: string
+                      description:
+                        type: string
+                      parameters:
+                        type: object
+                        additionalProperties: true
+      responses:
+        '200':
+          description: Quality rules set
+  /metadata/data-quality/{asset_id}:
+    get:
+      summary: Get data quality rules
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Quality rules info
+  /metadata/search:
+    get:
+      summary: Search metadata by asset ID or name
+      description: Searches for metadata based on a partial match of the asset ID or name. Returns all matching metadata entries.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: Search query to match asset ID or name.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          description: Limit the number of results returned (default is 10).
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: offset
+          in: query
+          required: false
+          description: Offset for pagination (default is 0).
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Successful search of metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    description: Total number of matching metadata entries
+                  limit:
+                    type: integer
+                    description: Limit for paginated results
+                  offset:
+                    type: integer
+                    description: Offset for paginated results
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Metadata'
+        '400':
+          description: Invalid search query or parameters
+        '404':
+          description: No matching metadata found
+  /metadata/audit/{asset_id}:
+    get:
+      summary: Audit logs for metadata
+      parameters:
+        - in: path
+          name: asset_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Audit log
+  /auth/login:
+    post:
+      summary: Login and get JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: JWT token
+  /auth/logout:
+    post:
+      summary: Logout
+      responses:
+        '204':
+          description: Logged out
+  /auth/validate:
+    get:
+      summary: Validate JWT
+      responses:
+        '200':
+          description: Token valid
+        '401':
+          description: Token invalid or expired
+  /system/health:
+    get:
+      summary: System health check
+      responses:
+        '200':
+          description: Healthy
+  /tenants/{tenant_id}/sources:
+    get:
+      summary: List inbound/outbound sources
+      parameters:
+        - in: path
+          name: tenant_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Source config
+  /tenants/{tenant_id}/config:
+    get:
+      summary: Get tenant config
+      parameters:
+        - in: path
+          name: tenant_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Config details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  config_id:
+                    type: string
+                  settings:
+                    type: object
+                    additionalProperties: true
+
+  /connectors/{tenant_id}:
+    post:
+      summary: Register connector
+      parameters:
+        - in: path
+          name: tenant_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                connector_name:
+                  type: string
+                config:
+                  type: object
+                  additionalProperties: true
+      responses:
+        '201':
+          description: Connector registered
+    get:
+      summary: List tenant connectors
+      parameters:
+        - in: path
+          name: tenant_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Connector list
+  /connectors/{tenant_id}/{connector_id}:
+    delete:
+      summary: Remove connector
+      parameters:
+        - in: path
+          name: tenant_id
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: connector_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Connector removed
