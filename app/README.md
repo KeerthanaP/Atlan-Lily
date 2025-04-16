@@ -1,12 +1,21 @@
 # Atlan Lily Prototype
 
-Prototype for metadata ingestion and retrieval.
+The prototype covers basic inbound and outbound metadata workflows, including validation, authentication, and mock persistence.
 
-### Features:
-- **POST /metadata**: Ingest metadata with JSON schema validation.
-- **GET /metadata/search**: Retrieve metadata by asset ID.
+## Features:
+### Inbound: Metadata Ingestion
+- **Endpoint**: `POST /metadata`  
+- **Description**: Ingests metadata into the system. Validates input using JSON schema.
+- **Response**: Returns a unique `asset_id` for the ingested metadata.
+
+### Outbound: Metadata Search
+- **Endpoint**: `GET /metadata/search?query={keyword}`  
+- **Description**: Searches metadata assets based on asset ID or name.
+- **Response**: Paginated list of metadata assets matching the query.
+
+### Other considerations
 - **Security**: JWT authentication for all endpoints.
-- **Tech Stack**: Python FastAPI, Docker, pytest, JWT.
+- **Tech Stack**: Python FastAPI, Search Service, Postgres Database, Docker, pytest, JWT.
 
 ### Generate Token
 ![Generate Token](images/prototype-generate-token.png)

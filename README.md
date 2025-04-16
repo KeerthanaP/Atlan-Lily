@@ -30,6 +30,8 @@
 - [Tenancy & Deployment](#tenancy--deployment)
   - [Deployment Options](#deployment-options)
 - [Service Level Agreement](#service-level-agreement)
+- [Prototype Implementation](#prototype-implementation)
+
 ---
 
 
@@ -89,9 +91,28 @@ Atlan Lily is a metadata management platform designed to solve real-time data ob
 - **Modularity:** Enable easy plug-and-play expansion for new sources and tools.
 - **Scalability:** Ensure the system can scale horizontally to handle massive metadata volumes.
 - **Observability:** Incorporate robust logging, monitoring, and alerting capabilities for real-time monitoring.
+---
+## Use Cases
+![Atlan Lily Architecture Diagram](lily-use-case-v2.png)
+
+---
+
+# Architecture Diagram
+![Atlan Lily Architecture Diagram](lily-arch-v3.png)
+
+# Sequence of Interaction
+## Metadata Ingestion
+![Metadata Ingestion](<metadata-ingestion-seq.png>) 
+## Metadata Transformation Service
+![Metadata Transformation Service](metadata-transformation-service.png) 
+## Outbound Dispatcher Service
+![Outbound Metadata Ingestion](outbound-external-seq.png)
 
 ---
 # **Atlan Lily Metadata Management API**
+### **Open API Spec**
+
+[Atlan Lily Open API Spec](atlan-lily-v1.yaml)
 
 ### **Base URL**
 
@@ -186,25 +207,6 @@ This API requires **JWT** authentication for access.
   ]
 }
 ```
-
-[Atlan Lily Open API Spec](atlan-lily-v1.yaml)
----
-## Use Cases
-![Atlan Lily Architecture Diagram](lily-use-case-v2.png)
-
----
-
-# Architecture Diagram
-![Atlan Lily Architecture Diagram](lily-arch-v3.png)
-
-# Sequence of Interaction
-## Metadata Ingestion
-![Metadata Ingestion](<metadata-ingestion-seq.png>) 
-## Metadata Transformation Service
-![Metadata Transformation Service](metadata-transformation-service.png) 
-## Outbound Dispatcher Service
-![Outbound Metadata Ingestion](outbound-external-seq.png)
-
 ---
 # Back-of-the-Envelope Estimation
 Estimated monthly cost and infra footprint for processing real-time metadata events from
@@ -300,3 +302,11 @@ In addition to the core components and technologies listed, it is important to c
 ## Service Level Aggrement
 - 99.9% uptime on the system.
 - <5s metadata ingestion, <2s search, <5s lineage, supporting up to 10k concurrent users.
+
+
+## Prototype Implementation
+For inbound/outbound prototype APIs, check out the [Prototype README](app/README.md).
+
+### Final Considerations
+
+As we move forward with **Atlan Lily**, continuous focus on **performance optimization**, **security enhancements**, and **customer feedback loops** will ensure the platform evolves to meet emerging needs while maintaining its core promise of enabling **real-time metadata management at enterprise scale**.
