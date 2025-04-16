@@ -220,7 +220,7 @@ Estimated monthly cost and infra footprint for processing real-time metadata eve
 |---------------------------|-----------------------------------|--------------------------------------------------|
 | **Stream Processor**       | Kafka Streams                     | Real-time enrichment, validation, routing        |
 | **Metadata Store**         | Postgres                          | Structured metadata, scoped per tenant           |
-| **Search Engine**          | OpenSearch                        | Asset discovery, full-text + filters             |
+| **Search Engine**          | Elastic Search                        | Index and search metadata (full-text search, filtering, discovery).             |
 | **Graph Engine**           | Neo4j / Neptune                   | Lineage, asset relationships                     |
 | **Orchestration**          | EKS       | Rebuilds, audits, scheduled jobs, containerized workloads |
 | **Auth**                   | OAuth2 + JWT                      | Stateless AuthN, fine-grained AuthZ              |
@@ -236,7 +236,7 @@ Estimated monthly cost and infra footprint for processing real-time metadata eve
 | **Kafka + Streams**         | Event ingestion + transformation                         | ~$1,000                  | - Kafka cluster: ~$0.15/hour/node (x3 nodes) <br> - Kafka Streams (processing) + storage: ~15% of overall system cost |
 | **Object Storage (S3)**     | Raw + enriched metadata events (~60 GB)                  | ~$2                      | - AWS S3 standard storage: ~$0.023 per GB/month <br> - (~60GB * $0.023) = $1.38 |
 | **Metadata DB (Postgres)**  | Structured metadata, multi-tenant scoped                 | ~$400                    | - AWS RDS (db.t3.medium): ~$0.046/hour <br> - 730 hours/month (avg. runtime) = ~$33.58 <br> - 50GB storage (5,000 DAUs), backup costs, etc. = ~$367/month |
-| **Search (OpenSearch)**     | Indexed metadata (full-text + filters)                   | ~$1,000                  | - OpenSearch instance (~2 nodes) with storage for indexing: ~$1.00/hour <br> - Data volume scaling based on metadata size (~500K assets) |
+| **Search (Elastic Seach)**     | Indexed metadata (full-text + filters)                   | ~$1,500                  | - Elastic Cloud (2 x 4GB RAM nodes, 100GB storage) |
 | **Graph DB (Neo4j/Neptune)**| Lineage, joins, relationships                            | ~$1,200                  | - AWS Neptune DB (~db.r5.large): ~$0.75/hour <br> - Storage & queries (~500K edges) + backups cost <br> - Estimated at ~$1,200/month |
 | **OAuth2/JWT Auth**         | Stateless token auth + scope-based roles                 | ~$300                    | - Managed auth with AWS Cognito/Auth0 (~$0.005 per 1,000 active users) <br> - JWT token storage & lifecycle management <br> - Estimated at ~$300/month |
 | **Secrets Management**      | Rotated DB creds/API keys (100 secrets, daily access)    | ~$100                    | - AWS Secrets Manager (~$0.40 per secret stored/month) <br> - 100 secrets x $0.40 = ~$40 <br> - API calls cost (~$60/month) |
@@ -252,7 +252,7 @@ Estimated monthly cost and infra footprint for processing real-time metadata eve
 
 | Resource                   | Monthly Cost Estimate |
 |---------------------------|-----------------------|
-| **Total**                  | **~$5,527/month**     |
+| **Total**                  | **~$6,027/month**     |
 
 
 # **Programming Language & Containerization**
@@ -290,10 +290,10 @@ In addition to the core components and technologies listed, it is important to c
 #### **Shared Deployment**
 
 - **Metadata Store (SQL)**  
-  Uses a common SQL database (e.g., Aurora PostgreSQL) with `tenant_id` as a partitioning key.
+  Uses a common SQL database (e.g., PostgreSQL) with `tenant_id` as a partitioning key.
 
 - **Search & Indexing Engine (NoSQL)**  
-  Multi-tenant indexes, logically separated by `tenant_id` in a single **OpenSearch** cluster.
+  Multi-tenant indexes, logically separated by `tenant_id` in a single **elastic search** cluster.
 
 - **Lineage Store (GraphDB)**  
   Shared **GraphDB** (e.g., **Neptune**) with **per-tenant subgraphs**.
