@@ -1,0 +1,61 @@
+### Get Access Token (Login)
+
+POST http://127.0.0.1:8000/token
+Content-Type: application/json
+
+{
+  "username": "kprabhakaran",
+  "password": "password"
+}
+
+### Get Access Token (Invalid Credentials)
+
+POST http://127.0.0.1:8000/token
+Content-Type: application/json
+
+{
+  "username": "invalid_user",
+  "password": "invalid_password"
+}
+
+### Ingest Metadata (POST /metadata)
+POST http://localhost:8000/metadata HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrcHJhYmhha2FyYW4iLCJleHAiOjE3NDQ3NTI3MTd9.KYksRXMSDX3UHe_Tju-5x2lIXTNjUoE3SngIm-Rnz7c
+
+{
+  "type": "table",
+  "source_type": "MySQL",
+  "source_id": "db1.users",
+  "metadata": {
+    "name": "Users Table",
+    "description": "Contains user information for authentication.",
+    "attributes": [
+      {
+        "name": "phone",
+        "type": "int",
+        "nullable": false
+      },
+      {
+        "name": "email",
+        "type": "varchar",
+        "nullable": false,
+        "size": 125
+      }
+    ]
+  },
+  "tags": ["sensitive", "user_data"],
+  "timestamp": "2025-04-15T12:00:00Z",
+  "tenant_id": "msft"
+}
+
+
+
+### Search for asset
+GET http://localhost:8000/metadata/search?query=table&limit=10&offset=0 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrcHJhYmhha2FyYW4iLCJleHAiOjE3NDQ3NDQ4ODR9.Jqphsy3bhkKom-sUDfG0c4uWsAH1MnHizqSTwpKwNuE
+
+
+### Search with empty query
+GET http://localhost:8000/metadata/search?query=&limit=10&offset=0 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrcHJhYmhha2FyYW4iLCJleHAiOjE3NDQ3NTI3MTd9.KYksRXMSDX3UHe_Tju-5x2lIXTNjUoE3SngIm-Rnz7c
