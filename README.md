@@ -58,13 +58,13 @@ Atlan Lily is a metadata management platform designed to solve real-time data ob
 
 | **Priority**       | **Focus**                          | **Description**                                                                                 |
 |--------------------|------------------------------------|-------------------------------------------------------------------------------------------------|
-| **High (Phase 1)** | Core System             |  Real-time metadata ingestion and processing. |
-| **High (Phase 1)** | Compliance & Governance            | Implement RBAC, GDPR/PII tagging, and audit trail support for secure and compliant operations.   |
-| **High (Phase 1)** | Observability & Monitoring         | Track logs, metrics, alerting, and tracing for operational visibility and incident handling.     |
-| **High (Phase 2)** | SaaS & Internal Integrations       | Connect to tools like JIRA, Slack, Monte Carlo, and internal metadata sources (e.g., Mysql).   |
-| **High (Phase 2)** | Performance & Scalability          | Optimize ingestion and querying to support 1B+ assets with low latency and high throughput.       |
-| **High (Phase 2)** | Extensibility Framework            | Build plugin-style support for connectors and metadata.       |
-| **Future (Phase 3)** | AI & Automation                  | Add ML-based data classification, anomaly detection, and automated metadata management.          |
+| **Phase 1** | Core System             |  Real-time metadata ingestion and processing. |
+| **Phase 1** | Compliance & Governance            | Implement RBAC, GDPR/PII tagging, and audit trail support for secure and compliant operations.   |
+| **Phase 1** | Observability & Monitoring         | Track logs, metrics, alerting, and tracing for operational visibility and incident handling.     |
+| **Phase 2** | SaaS & Internal Integrations       | Connect to tools like JIRA, Slack, Monte Carlo, and internal metadata sources (e.g., Mysql).   |
+| **Phase 2** | Performance & Scalability          | Optimize ingestion and querying to support 1B+ assets with low latency and high throughput.       |
+| **Phase 2** | Extensibility Framework            | Build plugin-style support for connectors and metadata.       |
+| **Phase 3** | AI & Automation                  | Add ML-based data classification, anomaly detection, and automated metadata management.          |
 
 ---
 # Future UI Roadmap for Atlan Lily
